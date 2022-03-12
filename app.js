@@ -1,3 +1,4 @@
+let serverless = require('serverless-http');
 let http = require('http');
 let fs = require('fs');
 let uglify = require('uglify-js');
@@ -10,8 +11,6 @@ let DocumentHandler = require('./lib/document_handler');
 
 const configPath = process.argv.length <= 2 ? 'config.js' : process.argv[2];
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-config.port = process.env.PORT || config.port || 8080;
-config.host = process.env.HOST || config.host || 'localhost';
 
 if (config.logging) {
   try {
@@ -118,6 +117,4 @@ app.use(connect_st({
   index: 'index.html'
 }));
 
-http.createServer(app).listen(config.port, config.host);
-
-winston.info('listening on ' + config.host + ':' + config.port);
+module.exports.handler = serverless(app);
